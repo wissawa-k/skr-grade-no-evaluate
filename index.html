@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKR Grade Reader</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="page">
+    <header>
+      <h1>SKR Grade Reader</h1>
+      <p>Simple student result viewer</p>
+    </header>
+
+    <nav>
+      <a href="./">Home</a> |
+      <a href="https://grade.skr.ac.th/" target="_blank" rel="noopener">Official SKR Login</a> |
+      <a href="#instructions">Instructions</a>
+    </nav>
+
+    <main>
+      <section id="importPanel" class="box">
+        <div class="box-title">Open a grade report</div>
+        <div class="box-content">
+          <p>This static page cannot log in to the school website directly. Import your saved SKR result page instead.</p>
+
+          <ol id="instructions">
+            <li>Open the <a href="https://grade.skr.ac.th/" target="_blank" rel="noopener">official SKR grade website</a>.</li>
+            <li>Log in and open the page showing your grades.</li>
+            <li>Press <kbd>Ctrl</kbd> + <kbd>S</kbd> and save the page as HTML.</li>
+            <li>Select the saved <code>.html</code> file below.</li>
+          </ol>
+
+          <div class="file-area">
+            <label for="resultFile"><b>Saved result file:</b></label><br>
+            <input id="resultFile" type="file" accept=".html,.htm,text/html">
+            <button id="clearButton" type="button" disabled>Clear results</button>
+          </div>
+
+          <p class="privacy"><b>Privacy:</b> The selected file is read only inside your browser. It is not uploaded or saved by this website.</p>
+          <p id="message" class="message" role="alert"></p>
+        </div>
+      </section>
+
+      <div id="results" hidden>
+        <section class="box">
+          <div class="box-title">Student information</div>
+          <div class="box-content">
+            <table class="info-table">
+              <tr><th>Name</th><td id="studentName"></td><th>Student ID</th><td id="studentId"></td></tr>
+              <tr><th>Class</th><td id="studentClass"></td><th>Number</th><td id="studentNumber"></td></tr>
+            </table>
+          </div>
+        </section>
+
+        <section class="box warning" id="evaluationWarning" hidden>
+          <div class="box-title">Notice</div>
+          <div class="box-content">The SKR page says that teacher evaluation is still required.</div>
+        </section>
+
+        <section class="box">
+          <div class="box-title">Overall summary</div>
+          <div class="box-content summary-grid">
+            <div><b id="cumulativeGpa">-</b><span>Approx. GPA</span></div>
+            <div><b id="totalCredits">-</b><span>Total credits</span></div>
+            <div><b id="semesterCount">-</b><span>Semesters</span></div>
+            <div><b id="latestRank">-</b><span>Latest rank</span></div>
+          </div>
+        </section>
+
+        <section class="box">
+          <div class="box-title">Semester history</div>
+          <div class="box-content table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Level</th><th>Semester</th><th>GPA</th><th>Credits studied</th><th>Credits earned</th><th>Rank</th></tr></thead>
+              <tbody id="historyBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="box">
+          <div class="box-title">Course results</div>
+          <div class="box-content">
+            <p>
+              <label for="semesterSelect"><b>Select semester:</b></label>
+              <select id="semesterSelect"></select>
+              <span id="termSummary"></span>
+            </p>
+            <div class="table-wrap">
+              <table class="data-table courses-table">
+                <thead>
+                  <tr><th>Code</th><th>Course</th><th>Type</th><th>Credits</th><th>Midterm</th><th>Final</th><th>Total</th><th>Grade</th><th>Teacher</th></tr>
+                </thead>
+                <tbody id="courseBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      SKR Grade Reader &mdash; Unofficial static viewer<br>
+      Data source: the HTML file selected on this device
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
