@@ -2,8 +2,8 @@ import os
 import re
 from datetime import datetime
 
-import requests
 from bs4 import BeautifulSoup
+from curl_cffi import requests
 from flask import Flask, jsonify, request, send_from_directory
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -12,10 +12,6 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 BASE_URL = "https://grade.skr.ac.th"
 ROOT = os.path.dirname(os.path.abspath(__file__))
-USER_AGENT = (
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
-)
 
 app = Flask(__name__, static_folder=None)
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
@@ -119,18 +115,36 @@ def parse_result(html):
     }
 
 
+def upstream_request(session, method, url, **kwargs):
+    """Retry once because the school server occasionally responds very slowly."""
+    last_error = None
+    for _attempt in range(2):
+        try:
+            response = session.request(method, url, timeout=45, **kwargs)
+            response.raise_for_status()
+            return response
+        except requests.RequestsError as error:
+            last_error = error
+            response = getattr(error, "response", None)
+            if response is not None and response.status_code in {401, 403, 429}:
+                raise
+    raise last_error
+
+
 def fetch_results(national_id, birth_date):
-    session = requests.Session()
-    session.headers.update(
-        {"User-Agent": USER_AGENT, "Accept-Language": "th-TH,th;q=0.9,en;q=0.8"}
-    )
+    session_options = {"impersonate": os.getenv("SKR_BROWSER", "chrome")}
+    if os.getenv("SKR_HTTP_PROXY"):
+        session_options["proxy"] = os.environ["SKR_HTTP_PROXY"]
+    session = requests.Session(**session_options)
+    session.headers.update({"Accept-Language": "th-TH,th;q=0.9,en;q=0.8"})
     clearance = os.getenv("SKR_CF_CLEARANCE")
     if clearance:
         session.cookies.set("cf_clearance", clearance, domain="grade.skr.ac.th", path="/")
 
-    initial = session.get(f"{BASE_URL}/index.php", timeout=20)
-    initial.raise_for_status()
-    login = session.post(
+    upstream_request(session, "GET", f"{BASE_URL}/index.php")
+    upstream_request(
+        session,
+        "POST",
         f"{BASE_URL}/login.php",
         data={
             "nationid_student": national_id,
@@ -138,15 +152,13 @@ def fetch_results(national_id, birth_date):
             "submit": " ",
         },
         headers={"Origin": BASE_URL, "Referer": f"{BASE_URL}/index.php"},
-        timeout=20,
     )
-    login.raise_for_status()
-    result = session.get(
+    result = upstream_request(
+        session,
+        "GET",
         f"{BASE_URL}/result.php",
         headers={"Referer": f"{BASE_URL}/login.php"},
-        timeout=20,
     )
-    result.raise_for_status()
     return parse_result(result.text)
 
 
@@ -191,7 +203,7 @@ def login():
         return jsonify(fetch_results(national_id, birth_date))
     except ValueError as error:
         return jsonify(error=str(error)), 401
-    except requests.RequestException as error:
+    except requests.RequestsError as error:
         status = getattr(error.response, "status_code", None)
         if status == 403:
             return jsonify(error="SKR or Cloudflare blocked the server request."), 502

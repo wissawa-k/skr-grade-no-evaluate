@@ -18,10 +18,16 @@ Open <http://127.0.0.1:8000>.
 3. Select the repository and deploy. Railway uses `railway.json` automatically.
 4. Open **Settings → Networking → Generate Domain**.
 
-No environment variables are normally required. If Cloudflare blocks Railway's request to SKR, add this Railway variable and redeploy:
+No environment variables are normally required. Requests use a Chrome-compatible TLS fingerprint to avoid false automated-client detection by Cloudflare.
+
+Optional Railway variables:
 
 ```text
 SKR_CF_CLEARANCE=your_current_clearance_cookie
+SKR_BROWSER=chrome
+SKR_HTTP_PROXY=http://username:password@proxy-host:port
 ```
+
+`SKR_CF_CLEARANCE` is temporary and may be tied to the browser or IP that created it. `SKR_HTTP_PROXY` is only needed if Cloudflare blocks Railway's outbound IP even with browser impersonation.
 
 Credentials are passed to SKR for the current login request and are not saved. Login attempts are rate-limited.
