@@ -1,19 +1,27 @@
 # SKR Grade Reader
 
-A simple, static viewer for saved HTML result pages from `grade.skr.ac.th`.
+An old-school web interface that logs in to `grade.skr.ac.th` through a small Flask proxy and displays the returned grade report.
 
-## Use locally
+## Run locally
 
-Open `index.html` in a browser. No server or installation is required.
+```bash
+python3 -m pip install -r requirements.txt
+python3 app.py
+```
 
-1. Log in at <https://grade.skr.ac.th/>.
-2. Open the result page and save it as HTML (`Ctrl+S`).
-3. Select the saved file in SKR Grade Reader.
+Open <http://127.0.0.1:8000>.
 
-The file is parsed entirely in the browser and is never uploaded.
+## Deploy to Railway
 
-## GitHub Pages
+1. Push this directory to a GitHub repository.
+2. In Railway, choose **New Project → Deploy from GitHub repo**.
+3. Select the repository and deploy. Railway uses `railway.json` automatically.
+4. Open **Settings → Networking → Generate Domain**.
 
-Push these files to a GitHub repository, open **Settings → Pages**, and select **Deploy from a branch** using the repository root.
+No environment variables are normally required. If Cloudflare blocks Railway's request to SKR, add this Railway variable and redeploy:
 
-The site cannot log in to SKR directly because browsers prevent a static site on another domain from reading the authenticated SKR response. Importing the saved result file avoids that restriction without transmitting credentials or student data.
+```text
+SKR_CF_CLEARANCE=your_current_clearance_cookie
+```
+
+Credentials are passed to SKR for the current login request and are not saved. Login attempts are rate-limited.

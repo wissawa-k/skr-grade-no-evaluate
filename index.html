@@ -20,25 +20,28 @@
     </nav>
 
     <main>
-      <section id="importPanel" class="box">
-        <div class="box-title">Open a grade report</div>
+      <section id="loginPanel" class="box">
+        <div class="box-title">Student login</div>
         <div class="box-content">
-          <p>This static page cannot log in to the school website directly. Import your saved SKR result page instead.</p>
+          <p>Enter the same information used by the official SKR grade system.</p>
+          <form id="loginForm">
+            <table class="login-table">
+              <tr>
+                <th><label for="nationalId">National ID:</label></th>
+                <td><input id="nationalId" name="nationalId" type="text" inputmode="numeric" autocomplete="username" maxlength="13" required> (13 digits)</td>
+              </tr>
+              <tr>
+                <th><label for="birthDate">Birth date:</label></th>
+                <td><input id="birthDate" name="birthDate" type="text" inputmode="numeric" autocomplete="bday" maxlength="10" placeholder="DD/MM/YYYY" required> (Buddhist year)</td>
+              </tr>
+              <tr>
+                <th></th>
+                <td><button id="loginButton" type="submit">Login and view grades</button></td>
+              </tr>
+            </table>
+          </form>
 
-          <ol id="instructions">
-            <li>Open the <a href="https://grade.skr.ac.th/" target="_blank" rel="noopener">official SKR grade website</a>.</li>
-            <li>Log in and open the page showing your grades.</li>
-            <li>Press <kbd>Ctrl</kbd> + <kbd>S</kbd> and save the page as HTML.</li>
-            <li>Select the saved <code>.html</code> file below.</li>
-          </ol>
-
-          <div class="file-area">
-            <label for="resultFile"><b>Saved result file:</b></label><br>
-            <input id="resultFile" type="file" accept=".html,.htm,text/html">
-            <button id="clearButton" type="button" disabled>Clear results</button>
-          </div>
-
-          <p class="privacy"><b>Privacy:</b> The selected file is read only inside your browser. It is not uploaded or saved by this website.</p>
+          <p class="privacy"><b>Privacy:</b> Credentials are used only for the current request to SKR. They are not stored by this application.</p>
           <p id="message" class="message" role="alert"></p>
         </div>
       </section>
@@ -102,7 +105,7 @@
 
     <footer>
       SKR Grade Reader &mdash; Unofficial static viewer<br>
-      Data source: the HTML file selected on this device
+      Data source: grade.skr.ac.th
     </footer>
   </div>
   <script src="app.js"></script>

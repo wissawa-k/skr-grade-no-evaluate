@@ -56,16 +56,13 @@ main { padding: 12px; }
 li { margin: 6px 0; }
 kbd, code { font-family: "Courier New", monospace; background: #eee; border: 1px solid #aaa; padding: 1px 4px; }
 
-.file-area {
-  margin: 14px 0;
-  padding: 12px;
-  background: #eee;
-  border: 1px inset #aaa;
-}
-
 input, select, button { font: inherit; }
-input[type="file"] { margin-top: 7px; }
 button { margin-left: 8px; padding: 3px 10px; }
+.login-table th { padding: 7px 10px 7px 0; text-align: right; vertical-align: top; }
+.login-table td { padding: 5px; }
+.login-table input { width: 240px; max-width: 100%; padding: 4px; border: 2px inset #ddd; }
+.login-table button { margin: 3px 0; padding: 5px 12px; }
+.login-table button:disabled { color: #777; }
 .privacy { color: #444; font-size: 12px; }
 .message { color: #b00000; font-weight: bold; }
 .message.success { color: #086308; }
@@ -116,6 +113,7 @@ footer {
   .summary-grid { grid-template-columns: 1fr 1fr; }
   .info-table th, .info-table td { display: block; width: 100%; }
   .info-table th { border-bottom: 0; }
-  button { margin: 8px 0 0; }
+  .login-table, .login-table tbody, .login-table tr, .login-table th, .login-table td { display: block; width: 100%; text-align: left; }
+  .login-table th { padding-bottom: 0; }
   #termSummary { display: block; margin: 7px 0 0; }
 }
